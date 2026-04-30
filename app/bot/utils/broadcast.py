@@ -1,4 +1,4 @@
-from bot.utils.formatting import format_table_result
+from app.bot.utils.formatting import format_table_result
 
 
 async def broadcast_table_results(bot, result: dict):

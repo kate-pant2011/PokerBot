@@ -1,6 +1,3 @@
-import logging
-from bot.config import settings
-
 import asyncio
 import logging
 import sys
@@ -9,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
-from bot.handlers import admin, common, player
+from app.bot.handlers import admin, common, player
 
 from aiogram.types import Message
 

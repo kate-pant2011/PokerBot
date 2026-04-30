@@ -2,9 +2,9 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from bot.api.player import get_leaderboard, get_player
-from bot.utils.formatting import leaderboard_text
-from bot.api.table import get_tables
+from app.bot.api.player import get_leaderboard, get_player
+from app.bot.utils.formatting import leaderboard_text
+from app.bot.api.table import get_tables
 from bot.config import APIError
 from .player import cmd_join
 from .admin import cmd_register

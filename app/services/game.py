@@ -230,9 +230,6 @@ async def distribute_tables(session, game_id, user_id):
         session=session, game_id=game_id, limit=100, offset=0, sort="-elo", sorting_rules=sorting
     )
 
-    pl = [table.id for table in new_tables]
-
-
     # distribute table logic
     await add_table_players(session=session, tables=new_tables, size_list=tables_size_list, players=players)
 

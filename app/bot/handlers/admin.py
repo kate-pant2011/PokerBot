@@ -2,16 +2,16 @@ from aiogram import Router, F, Bot
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
-from bot.api.game import get_my_games_api, distribute_tables_api, get_game_in_action, add_new_game, get_game_api, remove_from_game
-from bot.api.table import get_tables, close_table
-from bot.api.tgchat import add_new_tgchat, get_tgchats
-from bot.utils.formatting import format_table_result
-from bot.utils.broadcast import broadcast_table_results
+from app.bot.api.game import get_my_games_api, distribute_tables_api, get_game_in_action, add_new_game, get_game_api, remove_from_game
+from app.bot.api.table import get_tables, close_table
+from app.bot.api.tgchat import add_new_tgchat, get_tgchats
+from app.bot.utils.formatting import format_table_result
+from app.bot.utils.broadcast import broadcast_table_results
 from bot.config import APIError
-from bot.states.game import CreateGameState
+from app.bot.states.game import CreateGameState
 from datetime import datetime
 
-from bot.states.register import RegisterState
+from app.bot.states.register import RegisterState
 
 router = Router()
 

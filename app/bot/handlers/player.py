@@ -2,11 +2,11 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
-from bot.states.register import RegisterState
-from bot.states.chips import ChipsState
-from bot.api.player import register_player, get_player_stats
-from bot.api.game import join_game, leave_game, get_active_games
-from bot.api.table import (
+from app.bot.states.register import RegisterState
+from app.bot.states.chips import ChipsState
+from app.bot.api.player import register_player, get_player_stats
+from app.bot.api.game import join_game, leave_game, get_active_games
+from app.bot.api.table import (
     get_tables,
     join_table,
     set_player_chips_api,
