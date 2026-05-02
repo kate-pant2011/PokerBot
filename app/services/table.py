@@ -6,7 +6,7 @@ from app.database.table import (
 from app.database.table_player import table_participants_count
 from app.config.config import ApplicationException
 from app.schemas.common import to_schema
-from app.schemas.table import TableShortResponse, TableResponse, TableCountResponse
+from app.schemas.table import TableListResponse, TableResponse, TableCountResponse
 from app.services.game import check_game_by_id
 from app.schemas.common import BaseShortResponse
 
@@ -29,12 +29,12 @@ async def get_table_list(session, limit, offset, game_id, organizer_id=None):
         data.total_participants = count
         result.append(data)
 
-    return {
-        "items": result,
-        "total": tables.total,
-        "limit": limit,
-        "offset": offset,
-    }
+    return TableListResponse(
+        items=result,
+        total= tables.total,
+        limit=limit,
+        offset=offset,
+    )
 
 
 async def get_table_id(session, table_id):

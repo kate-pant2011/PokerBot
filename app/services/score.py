@@ -8,7 +8,7 @@ from app.schemas.common import to_schema
 from app.database.table import get_table_by_id
 from app.database.table_player import get_all_table_players_by_id
 from app.services.game import check_game_by_id
-from app.schemas.score import EloHistoryResponse
+from app.schemas.score import EloHistoryResponse, TableResultResponse, EloTableResult
 from app.schemas.common import BaseShortResponse
 from app.models.game import GameStatus
 from datetime import datetime, timezone
@@ -109,22 +109,20 @@ async def close_table_and_update_elo(session, table_id, user_id):
         tp.is_active = False
         tp.finished_at = datetime.now(timezone.utc)
 
-
         elo_results.append(
-            {
-                "player": {
-                    "id": player.id,
-                    "name": player.name,
-                },
-                "game_id": table.game_id,
-                "elo_change": round(elo_change, 2),
-                "bounty_bonus": round(bounty, 2),
-                "chips_bonus": round(chips_bonus, 2),
-                "position": tp.position,
-                "chips": tp.chips,
-            }
+            EloTableResult(
+                player=BaseShortResponse(
+                    id=player.id,
+                    name=player.name,
+                ),
+                game_id=table.game_id,
+                elo_change=round(elo_change, 2),
+                bounty_bonus=round(bounty, 2),
+                chips_bonus=round(chips_bonus, 2),
+                position=tp.position,
+                chips=tp.chips,
+            )
         )
-
 
     game = await check_game_by_id(session, table.game_id)
 
@@ -139,14 +137,15 @@ async def close_table_and_update_elo(session, table_id, user_id):
 
     elo_results.sort(key=lambda x: x["position"])
 
-    return {
-        "id": table.id,
-        "number": table.number,
-        "game_id": table.game_id,
-        "chat_id":game.telegram_chat_id or None,
-        "thread_id": game.telegram_chat.thread_id or None,
-        "elo_history": elo_results,
-    }
+    return TableResultResponse(
+        id=table.id,
+        number=table.number,
+        game_id=table.game_id,
+        chat_id=game.telegram_chat_id or None,
+        thread_id=game.telegram_chat.thread_id or None,
+        elo_history=elo_results,
+         
+     )
 
 
 def elo_delta(player, opponents, position, total_players):

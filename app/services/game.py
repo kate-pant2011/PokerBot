@@ -9,13 +9,11 @@ from app.database.game import (
 )
 from app.database.table_player import get_active_player_table, add_table_players
 from app.config.config import ApplicationException
-from app.schemas.common import to_schema
-from app.schemas.game import GameResponse, GPPlayerResponse
-from app.schemas.common import BaseShortResponse
+from app.schemas.common import to_schema, BaseListResponse, BaseShortResponse, ResultResponse
+from app.schemas.game import GameResponse, GamePlayerList, DistributeTablesResponse, TableDistribute, TablePlayerDistribute
 from datetime import datetime, timezone
 from app.models.game import Status, GameStatus
-from app.database.score import get_elo_history_by_player
-from app.database.table import add_tables, get_active_tables, get_all_tables
+from app.database.table import add_tables, get_all_tables
 from app.services.player import check_player_tg_id
 from sqlalchemy.exc import IntegrityError
 import math
@@ -47,24 +45,22 @@ async def get_game_list(session, limit, offset, status=None, organizer_id=None):
 
     games = await get_all_games(session, limit, offset, status, organizer_id)
 
-    return {
-        "items": [to_schema(BaseShortResponse, g) for g in games.items],
-        "total": games.total,
-        "limit": limit,
-        "offset": offset,
-    }
-
+    return BaseListResponse(
+        items=games.items,
+        total=games.total,
+        limit=limit,
+        offset=offset,
+    )
 
 async def get_game_players_list(session, game_id, limit, offset):
     game_players = await get_game_players(session, game_id, limit, offset)
 
-    return {
-        "items":  [to_schema(GPPlayerResponse, g) for g in game_players.items],
-        "total": game_players.total,
-        "limit": limit,
-        "offset": offset,
-    }
-
+    return GamePlayerList(
+        items=game_players.items,
+        total=game_players.total,
+        limit=limit,
+        offset=offset,
+    )
 
 async def get_game_id(session, id):
     game = await check_game_by_id(session, id)
@@ -127,7 +123,7 @@ async def join_game(session, game_id, player_id):
         await session.rollback()
         raise ApplicationException("Player already joined game", 400)
 
-    return {"result": "joined"}
+    return ResultResponse(result="joined")
 
 
 async def leave_game(session, game_id, player_id):
@@ -148,7 +144,7 @@ async def leave_game(session, game_id, player_id):
 
     in_game.status = Status.LEFT
 
-    return {"result": "left"}
+    return ResultResponse(result="left")
 
 
 async def archive_game(session, id, user_id):
@@ -196,11 +192,6 @@ async def distribute_tables(session, game_id, user_id):
     tables = tables.items
     if not tables:
         round_number = 1
-    #else:
-        #if any(t.finished_at is None for t in tables):
-            #raise ApplicationException("There are active tables, cannot start new round", 400)
-        
-        #round_number = 2
     
     if any(t.round == 1 for t in tables):
         raise ApplicationException("The max round-numbers is one, cannot start new round", 400)
@@ -242,42 +233,29 @@ async def distribute_tables(session, game_id, user_id):
 
 
 async def build_distribute_response(game, tables):
-    result_tables = []
-
-    for table in tables:
-        if table.finished_at is not None:
-            continue
-        
-        players = []
-
-        for tp in table.table_participants:
-            p = tp.player
-
-            players.append(
-                {
-                    "id": p.id,
-                    "name": p.name,
-                    "telegram_id": p.telegram_id,
-                }
+    return DistributeTablesResponse(
+        game_id=game.id,
+        chat_id=game.telegram_chat_id or None,
+        thread_id=game.telegram_chat.thread_id if game.telegram_chat else None,
+        tables=[
+            TableDistribute(
+                id=table.id,
+                number=table.number,
+                round=table.round,
+                players=[
+                    TablePlayerDistribute(
+                        id=tp.player.id,
+                        name=tp.player.name,
+                        telegram_id=tp.player.telegram_id,
+                    )
+                    for tp in table.table_participants
+                ]
             )
+            for table in tables if table.finished_at is None
+        ],
+    )
 
-        result_tables.append(
-            {
-                "id": table.id,
-                "number": table.number,
-                "round": table.round,
-                "players": players,
-            }
-        )
-
-    return {
-        "game_id": game.id,
-        "chat_id": game.telegram_chat_id or None,
-        "thread_id":game.telegram_chat.thread_id or None,
-        "tables": result_tables,
-    }
-
-
+    
 def split_tables(players: int, max_per_table: int):
     tables = math.ceil(players / max_per_table)
     

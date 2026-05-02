@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 import app.models_loader
+from app.config.connection import get_db
 from app.bot.handlers import admin, common, player
 from app.config.config import settings
 import logging
@@ -71,6 +73,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan) 
 
+
 app.middleware("http")(log_requests)
 app.include_router(table_player_router)
 app.include_router(player_router)
@@ -79,11 +82,15 @@ app.include_router(table_router)
 app.include_router(game_router)
 app.include_router(tgchat_router)
 
+
 @app.post("/webhook")
-async def bot_webhook(update: dict):
+async def bot_webhook(
+    update: dict,
+    session: AsyncSession = Depends(get_db),
+):
     try:
         tg_update = Update.model_validate(update, context={"bot": bot})
-        await dp.feed_update(bot, tg_update)
+        await dp.feed_update(bot, tg_update, session=session)
 
     except Exception as e:
         logging.error(f"Error processing update: {e}")

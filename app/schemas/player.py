@@ -29,13 +29,13 @@ class LeaderBoardListResponse(BaseModel):
 
 
 class PlayerPatchRequest(BaseModel):
-    name: str | None = Field(None, min_length=1)
+    name: str | None = Field(None, min_length=2)
 
     model_config = {"extra": "forbid"}
 
 
 class PlayerAddRequest(BaseModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=2)
 
     model_config = {"extra": "forbid"}
 

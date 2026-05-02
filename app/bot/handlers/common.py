@@ -1,19 +1,18 @@
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from app.bot.api.player import get_leaderboard, get_player
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.config.config import ApplicationException
 from app.bot.utils.formatting import leaderboard_text
-from app.bot.api.table import get_tables
-from bot.config import APIError
 from .player import cmd_join
 from .admin import cmd_register
+from app.services.player import check_player_tg_id, get_leaderboard
 
 router = Router(name="common")
 
-
 @router.message(Command("start"))
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message, state: FSMContext, bot: Bot, session: AsyncSession):
     user = message.from_user
     if not user:
         return
@@ -22,15 +21,19 @@ async def cmd_start(message: Message, state: FSMContext):
 
     if len(args) > 1 and args[1] == "join":
         try:
-            player = await get_player(tg_id=user.id)
+            player = await check_player_tg_id(session=session, tg_id=user.id)
             
-            if player == "404":
-                return await cmd_register(message, state)
-            
-            return await cmd_join(message)
+            return await cmd_join(message, session)
 
-        except APIError as e:
-            await message.answer(f"⚠️ {e.message}")
+        except ApplicationException as e:
+            if e.code == 404:
+                return await cmd_register(message, state, session)
+               
+            await message.answer(f"⚠️ {e.name}")
+            return
+
+        except Exception as e:
+            await message.answer("⚠️ Server error")
             return
     
     await message.answer("Hello! Please use:\n/register - for new members\n/help - for others")
@@ -38,49 +41,26 @@ async def cmd_start(message: Message, state: FSMContext):
 
 
 @router.message(Command("rating"))
-async def cmd_rating(message: Message):
+async def cmd_rating(message: Message, session: AsyncSession):
     user = message.from_user
     if not user:
         return
 
     try:
-        data = await get_leaderboard(tg_id=user.id)
+        player = await check_player_tg_id(session=session, tg_id=user.id)
+        data = await get_leaderboard(session=session, limit=50, offset=0)
 
-    except APIError as e:
-        await message.answer(f"⚠️ {e.message}")
+    except ApplicationException as e:
+        await message.answer(f"⚠️ {e.name}")
         return
 
-    items = data.get("items", [])
+    except Exception as e:
+        await message.answer("⚠️ Server error")
+        return
+
+    items = data.items
 
     text = leaderboard_text(items)
-
-    await message.answer(text)
-
-
-@router.message(Command("tables"))
-async def cmd_tables(message: Message):
-    try:
-        data = await get_tables()
-    except Exception:
-        await message.answer("❌ Cannot load tables")
-        return
-
-    tables = data.get("tables", [])
-
-    if not tables:
-        await message.answer("❌ No active tables")
-        return
-
-    text = "🃏 <b>Tables</b>\n\n"
-
-    for t in tables:
-        text += f"🟢 <b>Table {t['number']}</b> — {t['players_alive']}/{t['players_total']} alive\n"
-
-        for p in t["players"]:
-            mark = "" if p["is_alive"] else " ❌"
-            text += f"  {p['name']}{mark}\n"
-
-        text += "\n"
 
     await message.answer(text)
 
