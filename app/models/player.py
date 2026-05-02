@@ -1,5 +1,5 @@
 from .base import BaseModel
-from sqlalchemy import Column, Integer, String, Boolean, Float
+from sqlalchemy import Column, Integer, String, Boolean, Float, BigInteger
 from sqlalchemy.orm import relationship
 
 
@@ -7,7 +7,7 @@ class Player(BaseModel):
     __tablename__ = "players"
 
     name = Column(String, nullable=False, unique=True)
-    telegram_id = Column(Integer, unique=True, nullable=False, index=True)
+    telegram_id = Column(BigInteger, unique=True, nullable=False, index=True)
     elo = Column(Float, default=1000)
 
     is_archived = Column(Boolean, nullable=False, default=False, index=True)
