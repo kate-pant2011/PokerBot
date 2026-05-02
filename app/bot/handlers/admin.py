@@ -38,7 +38,7 @@ async def cmd_setup(message: Message, session: AsyncSession):
     chat_title = message.chat.title
 
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     try:
@@ -187,7 +187,7 @@ async def process_game_name(message: Message, state: FSMContext):
 @router.message(CreateGameState.waiting_for_date)
 async def process_game_date(message: Message, state: FSMContext, bot: Bot, session: AsyncSession):
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     raw = message.text.strip()
@@ -254,7 +254,7 @@ async def process_game_date(message: Message, state: FSMContext, bot: Bot, sessi
 @router.callback_query(F.data.startswith("start_game:"))
 async def cb_start_game(callback: CallbackQuery, bot: Bot, session: AsyncSession):
     tg_user = callback.from_user
-    if not user:
+    if not tg_user:
         return
 
     game_data = callback.data.split(":")
@@ -309,7 +309,7 @@ async def cb_start_game(callback: CallbackQuery, bot: Bot, session: AsyncSession
 @router.message(Command("finish"))
 async def cmd_finish(message: Message, session: AsyncSession):
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     try:
@@ -421,7 +421,7 @@ async def cb_finish_game(callback: CallbackQuery, session: AsyncSession):
 @router.callback_query(F.data.startswith("close_table:"))
 async def cb_close_table(callback: CallbackQuery, bot: Bot, session: AsyncSession):
     tg_user = callback.from_user
-    if not user:
+    if not tg_user:
         return
 
     table_id = int(callback.data.split(":")[1])

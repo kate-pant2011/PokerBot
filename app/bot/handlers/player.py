@@ -152,7 +152,7 @@ async def cb_full(callback: CallbackQuery):
 @router.callback_query(F.data.startswith("join_table:"))
 async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
     tg_user = callback.from_user
-    if not user:
+    if not tg_user:
         return
 
     table_id = int(callback.data.split(":")[1])
@@ -236,7 +236,7 @@ async def cb_leave_game(callback: CallbackQuery, session: AsyncSession):
 @router.message(Command("stats"))
 async def cmd_stats(message: Message, session: AsyncSession):
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     try:
@@ -265,7 +265,7 @@ async def cmd_stats(message: Message, session: AsyncSession):
 @router.message(Command("chips"))
 async def cmd_chips(message: Message, state: FSMContext, session: AsyncSession):
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     try:
@@ -367,7 +367,7 @@ async def process_chips(message: Message, state: FSMContext, session: AsyncSessi
 @router.message(Command("knockout"))
 async def cmd_knockout(message: Message, session: AsyncSession):
     tg_user = message.from_user
-    if not user:
+    if not tg_user:
         return
 
     try:
@@ -412,7 +412,7 @@ async def cmd_knockout(message: Message, session: AsyncSession):
 @router.callback_query(F.data.startswith("knockout:"))
 async def cb_knockout(callback: CallbackQuery, session: AsyncSession):
     tg_user = callback.from_user
-    if not user:
+    if not tg_user:
         return
 
     _, table_id, player_id = callback.data.split(":")

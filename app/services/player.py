@@ -22,7 +22,7 @@ async def check_player_by_id(session, id):
     if player.is_archived:
         raise ApplicationException(f"A player '{player.name}' is archived", 400, {"id": player.id})
 
-    return player
+    return to_schema(BaseShortResponse, player)
 
 
 async def check_player_tg_id(session, tg_id):
