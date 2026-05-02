@@ -168,11 +168,9 @@ async def join_game_router(
         return await join_game(session, game_id, player.id)
 
     except ApplicationException as e:
-        print(f"EERROR - {e}")
         raise HTTPException(status_code=e.code, detail=e.name)
 
     except Exception as e:
-        print(f"EERROR - {e}")
         raise HTTPException(status_code=500, detail=f"{type(e).__name__} - {e}")
 
 

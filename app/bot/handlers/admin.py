@@ -55,7 +55,7 @@ async def cmd_setup(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     await message.answer("♠♥♣♦")
@@ -78,7 +78,7 @@ async def cmd_start(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     items = games.items or []
@@ -123,7 +123,7 @@ async def cb_create_game(callback: CallbackQuery, state: FSMContext, session: As
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     items = tgchats.items or []
@@ -222,7 +222,7 @@ async def process_game_date(message: Message, state: FSMContext, bot: Bot, sessi
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     await message.answer(
@@ -270,7 +270,7 @@ async def cb_start_game(callback: CallbackQuery, bot: Bot, session: AsyncSession
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     text = [f"🎮 Game '{game_name}' started!\n"]
@@ -369,7 +369,7 @@ async def cmd_finish(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
 
@@ -414,7 +414,7 @@ async def cb_finish_game(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
 
@@ -436,7 +436,7 @@ async def cb_close_table(callback: CallbackQuery, bot: Bot, session: AsyncSessio
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     text = format_table_result(result)
@@ -472,7 +472,7 @@ async def cmd_game_list(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     items = games.items or []
@@ -517,7 +517,7 @@ async def cb_game_list(callback: CallbackQuery, state: FSMContext, session: Asyn
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     if game_players:
@@ -592,7 +592,7 @@ async def cb_create_game(callback: CallbackQuery, state: FSMContext, session: As
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     await callback.message.edit_text("✅ Done")

@@ -111,17 +111,13 @@ async def join_game(session, game_id, player_id):
             
         elif in_game.status == Status.LEFT:
             in_game.status = Status.JOINED
-            return {"result": "joined"}
-        
-        else:
-            raise ApplicationException(f"Player already joined", 400)
+            return ResultResponse(result="joined")
     
     try:
         await add_to_game(session=session, game_id=game_id, player_id=player_id)
 
     except IntegrityError as e:
-        await session.rollback()
-        raise ApplicationException("Player already joined game", 400)
+        raise ApplicationException(f"SQL Error: {e}", 400)
 
     return ResultResponse(result="joined")
 

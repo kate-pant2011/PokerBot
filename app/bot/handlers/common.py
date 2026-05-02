@@ -33,7 +33,7 @@ async def cmd_start(message: Message, state: FSMContext, bot: Bot, session: Asyn
             return
 
         except Exception as e:
-            await message.answer("⚠️ Server error")
+            await message.answer(f"⚠️ Server error - {e}")
             return
     
     await message.answer("Hello! Please use:\n/register - for new members\n/help - for others")
@@ -55,7 +55,7 @@ async def cmd_rating(message: Message, session: AsyncSession):
         return
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     items = data.items

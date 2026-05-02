@@ -41,7 +41,7 @@ async def process_name(message: Message, state: FSMContext, session: AsyncSessio
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         await state.clear()
         return
 
@@ -67,7 +67,7 @@ async def cmd_join(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     items = games.items or []
@@ -103,7 +103,7 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     await callback.message.edit_text("✅ joined")
@@ -119,7 +119,7 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     items = tables.items or []
@@ -166,7 +166,7 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     await callback.message.edit_text(f"✅ Joined table {result.table.number}")
@@ -190,7 +190,7 @@ async def cmd_leave(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
     
     items = games.items or []
@@ -226,7 +226,7 @@ async def cb_leave_game(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     await callback.message.edit_text("👋 You left the game")
@@ -249,7 +249,7 @@ async def cmd_stats(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     text = (
@@ -278,7 +278,7 @@ async def cmd_chips(message: Message, state: FSMContext, session: AsyncSession):
 
     except Exception as e:
         await state.clear()
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     players = data.players
@@ -380,7 +380,7 @@ async def cmd_knockout(message: Message, session: AsyncSession):
         return 
 
     except Exception as e:
-        await message.answer("⚠️ Server error")
+        await message.answer(f"⚠️ Server error - {e}")
         return
 
     if data.scope == "game":
@@ -432,7 +432,7 @@ async def cb_knockout(callback: CallbackQuery, session: AsyncSession):
         return 
 
     except Exception as e:
-        await callback.answer("⚠️ Server error", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
     await callback.message.edit_text("✅ Knockout recorded")
