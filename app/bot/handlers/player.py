@@ -96,7 +96,7 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
 
     try:
         player =  await check_player_tg_id(session=session, tg_id=user.id)
-        result = await join_game(session=session, game_id=game_id, player_id=user.id)
+        result = await join_game(session=session, game_id=game_id, player_id=player.id)
 
     except ApplicationException as e:
         await callback.answer(e.name, show_alert=True)
