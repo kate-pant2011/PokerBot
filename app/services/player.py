@@ -77,7 +77,7 @@ async def get_player_id(session, player_id):
         telegram_id=player.telegram_id,
         name=player.name,
         elo=player.elo,
-        organized_games=[to_schema(BaseShortResponse, g) for g in player.organized_games],
+        organized_games=player.organized_games,
         total_games=len(player.games) or 0,
         total_knockouts=len(player.eliminations) or 0,
     )

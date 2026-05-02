@@ -112,6 +112,11 @@ async def join_game(session, game_id, player_id):
         elif in_game.status == Status.LEFT:
             in_game.status = Status.JOINED
             return ResultResponse(result="joined")
+        
+        else:
+            status_val = getattr(in_game.status, 'value', in_game.status)
+            debug_info = f"ID:{in_game.player_id} | Stat:{status_val} | Typ:{type(in_game.status).__name__}"
+            return ResultResponse(result=debug_info)
     
     try:
         await add_to_game(session=session, game_id=game_id, player_id=player_id)
