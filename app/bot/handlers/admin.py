@@ -308,12 +308,12 @@ async def cb_start_game(callback: CallbackQuery, bot: Bot, session: AsyncSession
 
 @router.message(Command("finish"))
 async def cmd_finish(message: Message, session: AsyncSession):
-    tg_user = message.from_user
-    if not tg_user:
+    user = message.from_user
+    if not user:
         return
 
     try:
-        user = await check_player_tg_id(session=session, tg_id=tg_user.id)
+        await check_player_tg_id(session=session, tg_id=user.id)
         games = await get_game_list(
             session=session, limit=50, offset=0, organizer_id=user.id, status="in_action"
         )
