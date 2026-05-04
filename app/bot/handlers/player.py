@@ -111,7 +111,7 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
 
     try:
         tables = await get_table_list(
-            session=session, limit=50, offset=100, game_id=game_id, organizer_id=None
+            session=session, limit=50, offset=0, game_id=game_id, organizer_id=None
         )
 
     except ApplicationException as e:
@@ -125,7 +125,8 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
     items = tables.items or []
 
     if not items:
-        return
+        await callback.answer(f"Game has not started yet")
+        return 
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[

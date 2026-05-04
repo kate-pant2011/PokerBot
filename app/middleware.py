@@ -41,6 +41,8 @@ class DbSessionMiddleware(BaseMiddleware):
                 except Exception:
                     await session.rollback()
                     raise
+                finally:
+                    await session.close()
 
             else:
                 async with session.begin():

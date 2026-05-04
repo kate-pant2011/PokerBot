@@ -223,8 +223,8 @@ async def distribute_tables(session, game_id, user_id):
     # distribute table logic
     await add_table_players(session=session, tables=new_tables, size_list=tables_size_list, players=players)
 
-    await session.commit()
-    session.expire_all()
+    #await session.commit()
+    #session.expire_all()
     updated_game = await get_game_by_id(session, game_id)
 
 
