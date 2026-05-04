@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from .common import get_all_and_total
 from app.models.score import EloHistory
 from app.models.player import Player
-
+from app.models.table import Table
 
 async def get_elo_history_by_player(session, player_id, limit, offset):
     stmt = (
@@ -67,3 +67,5 @@ async def create_elo_history(
 
     session.add(elo)
     await session.flush()
+
+

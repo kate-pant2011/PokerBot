@@ -5,7 +5,7 @@ from app.database.score import (
 )
 from app.config.config import ApplicationException
 from app.schemas.common import to_schema
-from app.database.table import get_table_by_id
+from app.database.table import get_table_by_id, open_tables_count
 from app.database.table_player import get_all_table_players_by_id
 from app.services.game import check_game_by_id
 from app.schemas.score import EloHistoryResponse, TableResultResponse, EloTableResult
@@ -126,9 +126,9 @@ async def close_table_and_update_elo(session, table_id, user_id):
 
     game = await check_game_by_id(session, table.game_id)
 
-    open_tables = [t for t in game.tables if t.finished_at is None]
+    open_tables = await open_tables_count(session, table)
 
-    if table.round == 1 and len(open_tables) == 1:
+    if table.round == 1 and open_tables == 1:
         game.status = GameStatus.FINISHED
         game.is_archived = True
 

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from .common import apply_sorting, get_all_and_total
 from app.models.table import Table
@@ -45,3 +45,12 @@ async def add_tables(session, game_id, item):
 
     await session.flush()
     return tables
+
+
+async def open_tables_count(session, table):
+    return await session.scalar(
+    select(func.count(Table.id)).where(
+        Table.game_id == table.game_id,
+        Table.finished_at.is_(None)
+    )
+)
