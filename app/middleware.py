@@ -22,29 +22,34 @@ async def log_requests(request: Request, call_next):
     )
     return response
 
-
 class DbSessionMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         async with SessionLocal() as session:
-            is_manual = False
+            data["session"] = session
 
-            if isinstance(event, CallbackQuery):
-                if event.data and event.data.startswith("start_game:"):
-                    is_manual = True
+            use_manual = False
+            use_begin = True
 
-            if is_manual:
-                try:
-                    data["session"] = session
+            if isinstance(event, CallbackQuery) and event.data:
+                if event.data.startswith("start_game:"):
+                    use_manual = True
+                    use_begin = False
+
+            try:
+                if use_begin:
+                    async with session.begin():
+                        result = await handler(event, data)
+                else:
                     result = await handler(event, data)
-                    await session.commit()
-                    return result
-                except Exception:
-                    await session.rollback()
-                    raise
-                finally:
-                    await session.close()
 
-            else:
-                async with session.begin():
-                    data["session"] = session
-                    return await handler(event, data)
+                if use_manual:
+                    await session.commit()
+
+                return result
+
+            except Exception:
+                await session.rollback()
+                raise
+
+            finally:
+                await session.close()
