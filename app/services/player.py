@@ -5,7 +5,9 @@ from app.database.player import (
     add_player,
 )
 from app.database.game import get_active_game, get_game_players
-from app.database.table_player import get_active_player_table, get_table_players_by_id, get_active_table_map, get_player_chips_map
+from app.database.table_player import (
+    get_active_player_table, get_table_players_by_id, get_active_table_map, get_player_chips_map
+)
 from app.config.config import ApplicationException
 from app.schemas.player import PlayerResponse, LeaderBoardListResponse, MyTableResponse, TablePlayerInfo
 from app.schemas.common import BaseShortResponse, ResultResponse, to_schema
@@ -22,7 +24,7 @@ async def check_player_by_id(session, id):
     if player.is_archived:
         raise ApplicationException(f"A player '{player.name}' is archived", 400, {"id": player.id})
 
-    return to_schema(BaseShortResponse, player)
+    return player
 
 
 async def check_player_tg_id(session, tg_id):
