@@ -46,6 +46,13 @@ async def add_tables(session, game_id, item):
     await session.flush()
     return tables
 
+async def add_table(session, game_id, number, round):
+    table = Table(number=number, round=round, game_id=game_id)
+
+    session.add(table)
+
+    await session.flush()
+    return table
 
 async def open_tables_count(session, table):
     return await session.scalar(

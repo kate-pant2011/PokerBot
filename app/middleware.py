@@ -22,6 +22,8 @@ async def log_requests(request: Request, call_next):
     )
     return response
 
+
+'''
 class DbSessionMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         async with SessionLocal() as session:
@@ -53,3 +55,4 @@ class DbSessionMiddleware(BaseMiddleware):
 
             finally:
                 await session.close()
+'''

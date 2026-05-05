@@ -199,7 +199,7 @@ async def leave_game_router(
 async def distribute_tables_router(
     id: int,
     tg_id: int = Query(description="checking active player"),
-    session: AsyncSession = Depends(get_db_manual),
+    session: AsyncSession = Depends(get_db),
 ):
     try:
         user = await check_player_tg_id(session, tg_id)
