@@ -171,8 +171,8 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
-    await callback.message.edit_text("✅ Joined")
-    await callback.answer()
+    status_text = "✅ Joined the game!"
+    
 
     try:
         tables = await get_table_list(
@@ -180,12 +180,16 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         )
         items = tables.items or []
 
-        if items == []:
-            await callback.answer(f"Game has not started yet")
-            return 
-        
-        table = items[0]
-        result = await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
+        if items:
+            table = items[0]
+            await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
+            status_text += f"\n\n🎰 Game already started - please join any free table🤗"
+        else:
+            status_text += "\n\n⏳ Waiting for the organizer to start..."
+
+        await callback.message.edit_text(status_text)
+     
+        await callback.answer()
 
     except ApplicationException as e:
         await callback.answer(e.name, show_alert=True)
@@ -196,9 +200,9 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         return
 
     #await callback.message.edit_text(f"✅ Joined table {result.table.number}")
-    await callback.message.answer(f"Game has already started!\nPlease join any free table🤗")
 
-    await callback.answer()
+
+    
 
 
 @router.message(Command("leave"))
