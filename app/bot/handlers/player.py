@@ -162,12 +162,25 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
     try:
         user = await check_player_tg_id(session=session, tg_id=tg_user.id)
         result = await join_game(session=session, game_id=game_id, player_id=user.id)
+
+    except ApplicationException as e:
+        await callback.answer(e.name, show_alert=True)
+        return 
+
+    except Exception as e:
+        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
+        return
+
+    await callback.message.edit_text("✅ Joined")
+    await callback.answer()
+
+    try:
         tables = await get_table_list(
             session=session, limit=50, offset=0, game_id=game_id, organizer_id=None
         )
         items = tables.items or []
 
-        if not items:
+        if items == []:
             await callback.answer(f"Game has not started yet")
             return 
         
@@ -183,7 +196,7 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         return
 
     #await callback.message.edit_text(f"✅ Joined table {result.table.number}")
-    await callback.message.edit_text(f"✅ Joined table")
+    await callback.message.answer(f"Game has already started!\nPlease join any free table🤗")
 
     await callback.answer()
 
