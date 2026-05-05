@@ -201,11 +201,14 @@ async def distribute_tables(session, game_id, user_id):
 
     players_number = await get_game_players_count(session, game_id)
 
-    if players_number < 20:
-        tables_size_list = split_tables(players=players_number, max_per_table=6)
 
-    else:
-        tables_size_list = split_tables(players=players_number, max_per_table=8)
+    tables_size_list = split_tables(players=players_number, max_per_table=1)
+
+    #if players_number < 20:
+        #tables_size_list = split_tables(players=players_number, max_per_table=6)
+
+    #else:
+        #tables_size_list = split_tables(players=players_number, max_per_table=8)
     
     '''
     new_table_item = NewTablesDTO(
