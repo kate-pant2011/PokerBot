@@ -1,6 +1,5 @@
 from app.config.config import ApplicationException
-from app.schemas.common import to_schema
-from app.schemas.common import BaseShortResponse
+from app.schemas.common import to_schema, ResultResponse
 from app.schemas.table_player import TablePlayerResponse, TablePlayerKnockout
 from app.services.player import check_player_by_id
 from app.services.game import check_game_by_id
@@ -57,8 +56,8 @@ async def add_player_at_table(session, player_id, table_id=None):
 
     already_involved = await get_table_player_count(session, player_id, table.game_id)
 
-    if already_involved >= 2:
-        raise ApplicationException("Exceeded maximum game-attempts per game Limit - 2", 400)
+    #if already_involved >= 2:
+        #raise ApplicationException("Exceeded maximum game-attempts per game Limit - 2", 400)
 
     total_participants = await table_participants_count(session, table_id)
 
@@ -72,11 +71,7 @@ async def add_player_at_table(session, player_id, table_id=None):
         await session.rollback()
         raise ApplicationException("Cannot join the same table twice per game", 400)
 
-    data = to_schema(TablePlayerResponse, table_player)
-
-    data.table_participants = total_participants + 1
-
-    return data
+    return ResultResponse(result="joined")
 
 
 async def patch_table_rights(session, table_id, user_id, player_id):

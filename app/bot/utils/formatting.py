@@ -14,7 +14,7 @@ def leaderboard_text(players) -> str:
 
 
 def format_table_result(result) -> str:
-    text = f"🏁 Game {result.name} finished\n\n"
+    text = f"🏁 Game {result.game_name} finished\n\n"
 
     for r in result.elo_history:
         change = r.elo_change + r.bounty_bonus + r.chips_bonus

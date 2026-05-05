@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config.config import ApplicationException
 from app.config.connection import get_db
 from app.schemas.table_player import TablePlayerResponse, TablePlayerPatch, TablePlayerKnockout
+from app.schemas.common import ResultResponse
 from app.services.player import check_player_tg_id
 from app.services.table_player import (
     get_table_players,
@@ -31,7 +32,7 @@ async def get_table_players_router(
         raise HTTPException(status_code=500, detail=f" {type(e).__name__} - {e}")
 
 
-@table_player_router.post("/tables/{table_id}/players", response_model=TablePlayerResponse)
+@table_player_router.post("/tables/{table_id}/players", response_model=ResultResponse)
 async def add_player_at_table_player_router(
     table_id: int,
     tg_id: int = Query(description="checking active player"),
