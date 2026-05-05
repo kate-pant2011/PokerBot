@@ -141,6 +141,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
         id=table.id,
         number=table.number,
         game_id=table.game_id,
+        game_name=game.name,
         chat_id=game.telegram_chat_id or None,
         thread_id=game.telegram_chat.thread_id or None,
         elo_history=elo_results,

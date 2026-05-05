@@ -6,11 +6,12 @@ from app.config.config import ApplicationException
 from aiogram.filters import Command
 from app.bot.states.register import RegisterState
 from app.bot.states.chips import ChipsState
-from app.services.player import create_player, check_player_tg_id, get_player_id, get_my_table
+from app.bot.states.nick import NickState
+from app.services.player import create_player, check_player_tg_id, get_player_id, get_my_table, change_player
 from app.services.game import get_game_list, join_game, leave_game
 from app.services.table import get_table_list
 from app.services.table_player import add_player_at_table, change_table_player, leave_table
-from app.schemas.player import PlayerAddRequest
+from app.schemas.player import PlayerAddRequest, PlayerPatchRequest
 from app.schemas.table_player import TablePlayerPatch
 
 
@@ -158,23 +159,14 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
 
     #table_id = int(callback.data.split(":")[1])
     game_id = int(callback.data.split(":")[1])
+    await callback.answer()
 
     try:
         user = await check_player_tg_id(session=session, tg_id=tg_user.id)
-        result = await join_game(session=session, game_id=game_id, player_id=user.id)
+        await join_game(session=session, game_id=game_id, player_id=user.id)
 
-    except ApplicationException as e:
-        await callback.answer(e.name, show_alert=True)
-        return 
+        status_text = "✅ Joined the game!"
 
-    except Exception as e:
-        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
-        return
-
-    status_text = "✅ Joined the game!"
-    
-
-    try:
         tables = await get_table_list(
             session=session, limit=50, offset=0, game_id=game_id, organizer_id=None
         )
@@ -182,27 +174,28 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
 
         if items:
             table = items[0]
-            await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
-            status_text += f"\n\n🎰 Game already started - please join any free table🤗"
+            try:
+                await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
+                status_text += f"\n\n🎰 Game already started - you are added to Table #{table.number}!"
+            except Exception as e:
+                status_text += f"\n\n🎰 Game is in progress. You're in!\nerror = {str(e)[:150]}"
         else:
             status_text += "\n\n⏳ Waiting for the organizer to start..."
 
-        await callback.message.edit_text(status_text)
-     
-        await callback.answer()
+        try:
+            await callback.message.edit_text(status_text)
+        except Exception: 
+            pass
 
     except ApplicationException as e:
         await callback.answer(e.name, show_alert=True)
         return 
 
     except Exception as e:
-        await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
+        await callback.answer(f"⚠️ Server error - {str(e)[:150]}", show_alert=True)
         return
 
     #await callback.message.edit_text(f"✅ Joined table {result.table.number}")
-
-
-    
 
 
 @router.message(Command("leave"))
@@ -290,7 +283,67 @@ async def cmd_stats(message: Message, session: AsyncSession):
         f"KOs: {data.total_knockouts}\n"
     )
 
-    await message.answer(text)
+
+    keyboard = []
+    keyboard.append([
+        InlineKeyboardButton(
+            text="➕ CHANGE NICKNAME",
+            callback_data=f"change_nick:{user.id}"
+        )
+    ])
+
+    await message.answer(
+        f"{text}",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard)
+    )
+
+
+@router.callback_query(F.data.startswith("change_nick:"))
+async def process_new_nick(callback: CallbackQuery, state: FSMContext):
+
+    chat_data = callback.data.split(":")
+    user_id = int(chat_data[1])
+    await state.update_data(user_id=user_id)
+
+    await callback.message.edit_text("📝 Enter new nickname:")
+    await state.set_state(NickState.waiting_for_name)
+    await callback.answer()
+
+@router.message(NickState.waiting_for_name)
+async def change_user_nickname(message: Message, state: FSMContext, session: AsyncSession):
+    tg_user = message.from_user
+    if not tg_user:
+        return
+
+    raw = message.text.strip()
+
+    data = await state.get_data()
+    user_id = data["user_id"]
+
+    if len(raw) > 32:
+            await message.answer("⚠️ Nickname is too long (max 32 symbols)")
+            return
+
+    try:
+        item = PlayerPatchRequest(name=raw)
+        await change_player(session=session, id=user_id, item=item, user_id=user_id)
+
+    except ApplicationException as e:
+        await message.answer(f"⚠️ {e.name}")
+        await state.clear()
+        return 
+
+    except Exception as e:
+
+        await message.answer(f"⚠️ Server error - {e}")
+        await state.clear()
+        return
+
+    await message.answer(
+        f"✅ Name successfully changed to <b>{raw}</b>!"
+    )
+
+    await state.clear()
 
 
 @router.message(Command("chips"))

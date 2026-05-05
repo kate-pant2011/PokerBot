@@ -1,4 +1,4 @@
-def leaderboard_text(players: list[dict]) -> str:
+def leaderboard_text(players) -> str:
     if not players:
         return "Leaderboard is empty"
 
@@ -13,8 +13,8 @@ def leaderboard_text(players: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def format_table_result(result: dict) -> str:
-    text = f"🏁 Table {result.number} finished\n\n"
+def format_table_result(result) -> str:
+    text = f"🏁 Game {result.name} finished\n\n"
 
     for r in result.elo_history:
         change = r.elo_change + r.bounty_bonus + r.chips_bonus
