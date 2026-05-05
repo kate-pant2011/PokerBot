@@ -37,7 +37,7 @@ async def get_table_players(session, table_id):
     return result
 
 
-async def add_player_at_table(session, table_id, player_id):
+async def add_player_at_table(session, player_id, table_id=None):
     table = await get_table_by_id(session, table_id)
 
     if not table:
@@ -62,8 +62,8 @@ async def add_player_at_table(session, table_id, player_id):
 
     total_participants = await table_participants_count(session, table_id)
 
-    if total_participants >= 9:
-        raise ApplicationException("Exceeded maximum participants for table Limit - 9", 400)
+    #if total_participants >= 9:
+        #raise ApplicationException("Exceeded maximum participants for table Limit - 9", 400)
 
     try:
         table_player = await add_table_player(session, table_id, player_id)

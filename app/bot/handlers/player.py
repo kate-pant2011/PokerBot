@@ -85,7 +85,7 @@ async def cmd_join(message: Message, session: AsyncSession):
 
     await message.answer("🎮 Choose a game:", reply_markup=keyboard)
 
-
+'''
 @router.callback_query(F.data.startswith("join_game:"))
 async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
     user = callback.from_user
@@ -148,19 +148,31 @@ async def cb_join_game(callback: CallbackQuery, session: AsyncSession):
 @router.callback_query(F.data == "table_full")
 async def cb_full(callback: CallbackQuery):
     await callback.answer("❌ Table is full", show_alert=True)
+'''
 
-
-@router.callback_query(F.data.startswith("join_table:"))
+@router.callback_query(F.data.startswith("join_game:"))
 async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
     tg_user = callback.from_user
     if not tg_user:
         return
 
-    table_id = int(callback.data.split(":")[1])
+    #table_id = int(callback.data.split(":")[1])
+    game_id = int(callback.data.split(":")[1])
 
     try:
         user = await check_player_tg_id(session=session, tg_id=tg_user.id)
-        result = await add_player_at_table(session=session, table_id=table_id, player_id=user.id)
+        result = await join_game(session=session, game_id=game_id, player_id=user.id)
+        tables = await get_table_list(
+            session=session, limit=50, offset=0, game_id=game_id, organizer_id=None
+        )
+        items = tables.items or []
+
+        if not items:
+            await callback.answer(f"Game has not started yet")
+            return 
+        
+        table = items[0]
+        result = await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
 
     except ApplicationException as e:
         await callback.answer(e.name, show_alert=True)
@@ -170,7 +182,8 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
         await callback.answer(f"⚠️ Server error - {e}", show_alert=True)
         return
 
-    await callback.message.edit_text(f"✅ Joined table {result.table.number}")
+    #await callback.message.edit_text(f"✅ Joined table {result.table.number}")
+    await callback.message.edit_text(f"✅ Joined table")
 
     await callback.answer()
 
