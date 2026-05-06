@@ -12,3 +12,4 @@ alembic
 requests
 aiogram
 httpx
+numpy

@@ -22,7 +22,7 @@ async def get_table_players_by_id(session, table_id):
 async def get_table_player_by_id(session, table_id, user_id):
     result = await session.execute(
         select(TablePlayer)
-        .options(selectinload(TablePlayer.player))
+        .options(selectinload(TablePlayer.player).selectinload(Player.elo_history))
         .options(selectinload(TablePlayer.table))
         .options(selectinload(TablePlayer.eliminator))
         .where(TablePlayer.table_id == table_id)

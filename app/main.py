@@ -71,7 +71,12 @@ async def lifespan(app: FastAPI):
     await bot.delete_webhook()
     await bot.session.close()
 
-app = FastAPI(lifespan=lifespan) 
+app = FastAPI(
+    lifespan=lifespan,
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None 
+)
 
 
 app.middleware("http")(log_requests)

@@ -176,9 +176,9 @@ async def cb_join_table(callback: CallbackQuery, session: AsyncSession):
             table = items[0]
             try:
                 await add_player_at_table(session=session, table_id=table.id, player_id=user.id)
-                status_text += f"\n\n🎰 Game already started - you are added to Table #{table.number}!"
+                status_text += f"\n\n🎰 Game already started.\nPlease join any free table🤗!"
             except Exception as e:
-                status_text += f"\n\n🎰 Game is in progress. You're in!\nerror = {str(e)[:150]}"
+                status_text += f"\n\n error - {str(e)[:150]}"
         else:
             status_text += "\n\n⏳ Waiting for the organizer to start..."
 

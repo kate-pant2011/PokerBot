@@ -13,6 +13,7 @@ from app.schemas.common import BaseShortResponse
 from app.models.game import GameStatus
 from datetime import datetime, timezone
 from collections import defaultdict
+import numpy as np
 
 async def get_player_elo_history(session, player_id, limit, offset):
     result = await get_elo_history_by_player(session, player_id, limit, offset)
@@ -66,28 +67,23 @@ async def close_table_and_update_elo(session, table_id, user_id):
         if tp.eliminated_by_id:
             victim_elo = tp.player.elo
             knockouts_map[tp.eliminated_by_id].append(victim_elo)
-    
+        if tp.is_active:
+            tp.is_active = False
+            tp.finished_at = datetime.now(timezone.utc) if not tp.finished_at else tp.finished_at
+
     for tp in table_players:
         player = tp.player
 
-        opponents_elos = [
-            p.elo for p in players if p.id != player.id
-        ]
+        opponents = [p for p in table_players if p.player_id != player.id]
 
         elo_before = player.elo
 
         elo_change = elo_delta(
-            player,
-            opponents_elos,
-            tp.position,
-            total_players
+            tp,
+            opponents
         )
 
-        bounty = bounty_bonus(player.id, knockouts_map, players_map)
-        chips_bonus = calculate_chips_bonus(tp.chips, avg_chips)
-
-        total_change = elo_change + bounty + chips_bonus
-        elo_after = max(100, elo_before + total_change)
+        elo_after = max(100, elo_before + elo_change)
 
         player.elo = elo_after
 
@@ -99,15 +95,13 @@ async def close_table_and_update_elo(session, table_id, user_id):
             elo_before=round(elo_before, 2),
             elo_after=round(elo_after, 2),
             elo_change=round(elo_change, 2),
-            bounty_bonus=round(bounty, 2),
-            chips_bonus=chips_bonus,
+            bounty_bonus=0.0,
+            chips_bonus=0.0,
             position=tp.position,
             chips=tp.chips,
             players_total=total_players,
         )
 
-        tp.is_active = False
-        tp.finished_at = datetime.now(timezone.utc)
 
         elo_results.append(
             EloTableResult(
@@ -117,8 +111,8 @@ async def close_table_and_update_elo(session, table_id, user_id):
                 ),
                 game_id=table.game_id,
                 elo_change=round(elo_change, 2),
-                bounty_bonus=round(bounty, 2),
-                chips_bonus=round(chips_bonus, 2),
+                bounty_bonus=0.0,
+                chips_bonus=0.0,
                 position=tp.position,
                 chips=tp.chips,
             )
@@ -145,15 +139,39 @@ async def close_table_and_update_elo(session, table_id, user_id):
         chat_id=game.telegram_chat_id or None,
         thread_id=game.telegram_chat.thread_id or None,
         elo_history=elo_results,
-         
+
      )
 
 
-def elo_delta(player, opponents, position, total_players):
-    s = actual_score(position, total_players)
-    e = expected_score(player.elo, opponents)
-    k = k_factor(player.games_played, player.elo)
-    return k * (s - e)
+def elo_delta(table_player, opponents):
+    elo = table_player.player.elo
+    chips = table_player.chips
+    start = table_player.started_at
+    finish = table_player.finished_at
+    delta = 0
+    T = 5 * 60 * 60
+    K1, K2 = 1, 1
+    s_elo = 1 # не делаем вторую нормировку, этой достаточно
+    for opponent in opponents:
+        time = max(min(finish.timestamp(), opponent.finished_at .timestamp()) - max(start.timestamp(), opponent.started_at.timestamp()), 0)
+        p_ij = sigmoid((elo - opponent.player.elo)/s_elo)
+        part1_j  =  int(chips * opponent.chips != 0) * (sigmoid(np.log((chips + 50)/(opponent.chips + 50))) - p_ij) * time * K1 / T
+        
+        z_ij = 0.5
+        if finish.timestamp() > opponent.finished_at .timestamp() + 2:
+            z_ij = 1
+        elif finish.timestamp() < opponent.finished_at .timestamp() - 2:
+            z_ij = 0
+        
+        part2_j  =  int(time > 1) * (z_ij - p_ij) * K2
+
+
+        delta += part1_j + part2_j
+  
+    return delta
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
 
 def bounty_bonus(player_id, knockouts_map, players_map):
     victims = knockouts_map.get(player_id, [])
@@ -180,7 +198,7 @@ def actual_score(position, total):
 
 def k_factor(games_played, elo):
     if games_played < 10:
-        return 30 
+        return 30
     if elo < 1400:
         return 15
     return 10
@@ -188,7 +206,7 @@ def k_factor(games_played, elo):
 def calculate_chips_bonus(player_chips: int, avg_chips: float) -> float:
     if avg_chips == 0 or player_chips <= avg_chips:
         return 0.0
-    
+
     bonus = ((player_chips - avg_chips) / avg_chips) * 10.0
     return round(bonus, 2)
 
@@ -204,4 +222,3 @@ def assign_positions(table_players):
     for tp in active:
         tp.position = current_position
         current_position += 1
-

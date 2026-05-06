@@ -84,9 +84,6 @@ async def patch_table_rights(session, table_id, user_id, player_id):
 
     if not table_player:
         raise ApplicationException("Player not found at table", 404)
-
-    if player_id == user_id:
-        raise ApplicationException(f"Player cannot choose himself", 400)
     
     table_player_rights = await get_table_player_by_id(session, table_id, user_id)
 
@@ -114,14 +111,12 @@ async def leave_table(session, item, table_id, user_id, player_id, user_name):
 
     table_player.finished_at = finished_at
     table_player.is_active = False
-    if item.chips:
-        table_player.chips = item.chips or 0
     table_player.position = total_participants
 
-    if item.eliminated:
-        if user_rights == "organizer":
-            raise ApplicationException("Organizer cannot mark elimination", 400)
 
+    if user_rights == "organizer":
+        raise ApplicationException("Organizer cannot mark elimination", 400)
+    
         table_player.eliminated_by_id = user_id
 
     data = to_schema(TablePlayerKnockout, table_player)
@@ -135,6 +130,9 @@ async def leave_table(session, item, table_id, user_id, player_id, user_name):
 async def change_table_player(session, item, table_id, user_id, player_id):
     table_player, user_rights = await patch_table_rights(session, table_id, user_id, player_id)
 
+    if player_id == user_id:
+        raise ApplicationException(f"Player cannot choose himself", 400)
+    
     total_participants = await table_participants_count(session, table_id)
     table_player.chips = item.chips or 0
 

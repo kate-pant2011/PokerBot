@@ -57,7 +57,6 @@ class TablePlayerKnockout(BaseModel):
     
 
 class TablePlayerPatch(BaseModel):
-    chips: int | None = Field(None, ge=0)
     eliminated: Literal[True] | None = None
 
     model_config = {"extra": "forbid"}
