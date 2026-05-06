@@ -151,7 +151,7 @@ def elo_delta(table_player, opponents):
     delta = 0
     T = 60 #5 * 60 * 60
     K1, K2 = 48, 16
-    s_elo = 1 # не делаем вторую нормировку, этой достаточно
+    s_elo = 400 # не делаем вторую нормировку, этой достаточно
     for opponent in opponents:
         time = max(min(finish.timestamp(), opponent.finished_at .timestamp()) - max(start.timestamp(), opponent.started_at.timestamp()), 0)
         p_ij = sigmoid((elo - opponent.player.elo)/s_elo)

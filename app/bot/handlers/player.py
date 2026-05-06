@@ -287,7 +287,7 @@ async def cmd_stats(message: Message, session: AsyncSession):
     keyboard = []
     keyboard.append([
         InlineKeyboardButton(
-            text="➕ CHANGE NICKNAME",
+            text="➕ CHANGE NICK",
             callback_data=f"change_nick:{user.id}"
         )
     ])
