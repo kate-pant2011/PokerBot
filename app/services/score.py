@@ -149,8 +149,8 @@ def elo_delta(table_player, opponents):
     start = table_player.started_at
     finish = table_player.finished_at
     delta = 0
-    T = 5 * 60 * 60
-    K1, K2 = 1, 1
+    T = 60 #5 * 60 * 60
+    K1, K2 = 48, 16
     s_elo = 1 # не делаем вторую нормировку, этой достаточно
     for opponent in opponents:
         time = max(min(finish.timestamp(), opponent.finished_at .timestamp()) - max(start.timestamp(), opponent.started_at.timestamp()), 0)
