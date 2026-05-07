@@ -54,12 +54,12 @@ async def add_player_at_table(session, player_id, table_id=None):
             f"Please leave table #{existing.table.number} before joining a new one", 400
         )
 
-    already_involved = await get_table_player_count(session, player_id, table.game_id)
+    #already_involved = await get_table_player_count(session, player_id, table.game_id)
 
     #if already_involved >= 2:
         #raise ApplicationException("Exceeded maximum game-attempts per game Limit - 2", 400)
 
-    total_participants = await table_participants_count(session, table_id)
+    #total_participants = await table_participants_count(session, table_id)
 
     #if total_participants >= 9:
         #raise ApplicationException("Exceeded maximum participants for table Limit - 9", 400)

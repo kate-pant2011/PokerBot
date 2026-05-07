@@ -149,7 +149,7 @@ def elo_delta(table_player, opponents):
     start = table_player.started_at
     finish = table_player.finished_at
     delta = 0
-    T = 60 #5 * 60 * 60
+    T = 5 * 60 * 60
     K1, K2 = 100, 16 #48, 16
     s_elo = 400 # не делаем вторую нормировку, этой достаточно
     for opponent in opponents:
