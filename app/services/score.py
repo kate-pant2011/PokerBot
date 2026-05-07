@@ -149,18 +149,18 @@ def elo_delta(table_player, opponents):
     start = table_player.started_at
     finish = table_player.finished_at
     delta = 0
-    T = 60 #5 * 60 * 60
-    K1, K2 = 48, 16
+    T = 5 * 60 * 60
+    K1, K2 = 100, 16 #48, 16
     s_elo = 400 # не делаем вторую нормировку, этой достаточно
     for opponent in opponents:
-        time = max(min(finish.timestamp(), opponent.finished_at .timestamp()) - max(start.timestamp(), opponent.started_at.timestamp()), 0)
+        time = max(min(finish.timestamp(), opponent.finished_at.timestamp()) - max(start.timestamp(), opponent.started_at.timestamp()), 0)
         p_ij = sigmoid((elo - opponent.player.elo)/s_elo)
         part1_j  =  int(chips * opponent.chips != 0) * (sigmoid(np.log((chips + 50)/(opponent.chips + 50))) - p_ij) * time * K1 / T
         
         z_ij = 0.5
-        if finish.timestamp() > opponent.finished_at .timestamp() + 2:
+        if finish.timestamp() > opponent.finished_at.timestamp() + 2:
             z_ij = 1
-        elif finish.timestamp() < opponent.finished_at .timestamp() - 2:
+        elif finish.timestamp() < opponent.finished_at.timestamp() - 2:
             z_ij = 0
         
         part2_j  =  int(time > 1) * (z_ij - p_ij) * K2
@@ -168,7 +168,7 @@ def elo_delta(table_player, opponents):
 
         delta += part1_j + part2_j
   
-    return delta
+    return delta if delta > 0 else delta / 2.0
 
 def sigmoid(x):
     return 1/(1+np.exp(-x))
