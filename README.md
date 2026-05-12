@@ -1,6 +1,6 @@
-# Poker Tournaments Management System
+# Poker Tournament Management System
 
-Backend-system for local poker club
+Backend-system for a local poker club
 
 The project includes:
 - Telegram bot as the main user interface
@@ -58,7 +58,7 @@ Includes:
 - rating history
 - table participation history
 
-## Game
+### Game
 A poker tournament/event.
 
 Includes:
@@ -68,7 +68,7 @@ Includes:
 - Telegram chat integration
 - rating history
 
-## Table
+### Table
 A game table.
 
 Includes:
@@ -77,7 +77,7 @@ Includes:
 - player positions
 - eliminations
 
-## TablePlayer
+### TablePlayer
 Represents a player’s state and actions at a table.
 
 Includes:
@@ -87,7 +87,7 @@ Includes:
 - active state
 - timestamps
 
-## EloHistory
+### EloHistory
 Stores rating changes over time.
 
 Includes:
@@ -97,7 +97,7 @@ Includes:
 - position
 - chips
 
-## TelegramChat
+### TelegramChat
 Telegram chat/topic integration for games
 
 
