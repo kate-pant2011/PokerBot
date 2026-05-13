@@ -117,11 +117,11 @@ async def leave_table(session, item, table_id, user_id, player_id, user_name):
     if user_rights == "organizer":
         raise ApplicationException("Organizer cannot mark elimination", 400)
     
-        table_player.eliminated_by_id = user_id
+    table_player.eliminated_by_id = user_id
 
     data = to_schema(TablePlayerKnockout, table_player)
 
-    data.table_participants = total_participants
+    data.table_participants = total_participants - 1
     data.eliminator_name = user_name
 
     return data

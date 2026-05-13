@@ -16,12 +16,12 @@ def leaderboard_text(players) -> str:
 def format_table_result(result) -> str:
     text = f"🏁 Game <b>{result.game_name}</b> finished\n\n"
 
-    for r in result.elo_history:
+    for idx, r in enumerate(result.elo_history, start=1):
         change = r.elo_change + r.bounty_bonus + r.chips_bonus
         sign = "+" if change >= 0 else ""
 
         text += (
-            f"{r.position}. {r.player.name} — "
+            f"{idx}. {r.player.name} — "
             f"{r.chips} chips | "
             f"{sign}{round(change, 1)}\n"
         )

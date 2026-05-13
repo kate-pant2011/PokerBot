@@ -129,7 +129,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
     table.finished_at = datetime.now(timezone.utc)
     await session.flush()
 
-    elo_results.sort(key=lambda x: x.position)
+    elo_results.sort(key=lambda x: x.finished_at, reverse=True)
 
     return TableResultResponse(
         id=table.id,
@@ -167,8 +167,9 @@ def elo_delta(table_player, opponents):
 
 
         delta += part1_j + part2_j
-  
-    return delta if delta > 0 else delta / 2.0
+    delta = delta if delta > 0 else delta / 2.0
+    delta = min(60, max(delta, -60))
+    return delta
 
 def sigmoid(x):
     return 1/(1+np.exp(-x))

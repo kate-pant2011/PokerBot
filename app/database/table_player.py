@@ -39,6 +39,7 @@ async def get_all_table_players_by_id(session, table_id):
         .options(selectinload(TablePlayer.table))
         .where(TablePlayer.table_id == table_id)
     )
+    result = result.order_by(TablePlayer.chips)
     table_players = result.scalars().all()
     return table_players
 

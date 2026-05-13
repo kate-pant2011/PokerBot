@@ -3,11 +3,11 @@
 Backend-system for a local poker club
 
 The project includes:
-- Telegram bot as the main user interface
+- telegram bot as the main user interface
 - FastAPI REST API
 - player management system
 - rating system
-- Telegram chats/topics integration
+- telegram chats/topics integration
 - webhook infrastructure via Nginx
 
 ---
@@ -57,6 +57,7 @@ Includes:
 - current rating
 - rating history
 - table participation history
+- game participation history
 
 ### Game
 A poker tournament/event.
