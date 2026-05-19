@@ -33,13 +33,14 @@ async def get_table_player_by_id(session, table_id, user_id):
     return table_player
 
 async def get_all_table_players_by_id(session, table_id):
-    result = await session.execute(
+    stmt = (
         select(TablePlayer)
         .options(selectinload(TablePlayer.player))
         .options(selectinload(TablePlayer.table))
         .where(TablePlayer.table_id == table_id)
+        .order_by(TablePlayer.chips)
     )
-    result = result.order_by(TablePlayer.chips)
+    result = await session.execute(stmt)
     table_players = result.scalars().all()
     return table_players
 
