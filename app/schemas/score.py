@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from .common import BaseShortResponse
 from .table import TableShortResponse
+from datetime import datetime
 
 
 class EloHistoryResponse(BaseModel):
@@ -45,6 +46,7 @@ class EloTableResult(BaseModel):
     chips_bonus: float
     position: int
     chips: int
+    finished_at: datetime
 
 
 class TableResultResponse(BaseModel):

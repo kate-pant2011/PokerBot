@@ -70,6 +70,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
         if tp.is_active:
             tp.is_active = False
             tp.finished_at = datetime.now(timezone.utc) if not tp.finished_at else tp.finished_at
+            datetime.sleep(0.01)
 
     for tp in table_players:
         player = tp.player
@@ -115,6 +116,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
                 chips_bonus=0.0,
                 position=tp.position,
                 chips=tp.chips,
+                finished_at=tp.finished_at
             )
         )
 
