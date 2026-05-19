@@ -12,6 +12,7 @@ from app.schemas.score import EloHistoryResponse, TableResultResponse, EloTableR
 from app.schemas.common import BaseShortResponse
 from app.models.game import GameStatus
 from datetime import datetime, timezone
+from time import sleep
 from collections import defaultdict
 import numpy as np
 
@@ -70,7 +71,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
         if tp.is_active:
             tp.is_active = False
             tp.finished_at = datetime.now(timezone.utc) if not tp.finished_at else tp.finished_at
-            datetime.sleep(0.01)
+            sleep(0.01)
 
     for tp in table_players:
         player = tp.player
