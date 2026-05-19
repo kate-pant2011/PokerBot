@@ -83,6 +83,7 @@ async def cmd_help(message: Message):
         "/knockout — mark who you knocked out\n"
         "/finish — close table & calculate results (organizer only)\n\n"
         "<b>ℹ️ Other</b>\n"
+        "/game_list — players that joined your game (organizer only)\n"
         "/help — show this message\n"
     )
 
