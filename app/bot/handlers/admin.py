@@ -878,16 +878,16 @@ async def cb_create_game(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text("🆗 Nothing has been changed")
 
 
-@router.message(Command("reset_shit"))
-async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
-    #await mod_all_players_elo(session)
-    #await reset_all_players_elo(session, 0)
-    #await recalculate_rush6_elo(session)
-    await set_player_elo_by_name(
-    session,
-    "ksgo",
-    110)
-    await set_player_elo_by_name(
-        session,
-        "AnanasClassic",
-        105)
+# @router.message(Command("reset_shit"))
+# async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
+#     #await mod_all_players_elo(session)
+#     #await reset_all_players_elo(session, 0)
+#     #await recalculate_rush6_elo(session)
+#     await set_player_elo_by_name(
+#     session,
+#     "ksgo",
+#     110)
+#     await set_player_elo_by_name(
+#         session,
+#         "AnanasClassic",
+#         105)
