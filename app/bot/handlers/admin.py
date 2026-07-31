@@ -24,7 +24,7 @@ from app.bot.states.register import RegisterState
 from app.database.game import get_all_games, get_active_game_players, get_game_by_id
 from app.database.table import get_table_by_id, get_active_tables
 from app.database.table_player import get_active_player_table, get_table_players_for_knockout, reward_survivors, get_table_players_by_id
-from app.database.player import mod_all_players_elo, recalculate_rush6_elo
+from app.database.player import recalculate_rush6_elo, reset_all_players_elo
 
 router = Router()
 
@@ -880,5 +880,6 @@ async def cb_create_game(callback: CallbackQuery, state: FSMContext):
 
 @router.message(Command("reset_shit"))
 async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
-    await mod_all_players_elo(session)
+    #await mod_all_players_elo(session)
+    await reset_all_players_elo(session, 0)
     await recalculate_rush6_elo(session)

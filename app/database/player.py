@@ -63,13 +63,13 @@ async def reset_all_players_elo(session, elo: float = 1000):
     await session.flush()
 
 
-async def mod_all_players_elo(session):
-    await session.execute(
-        update(Player).values(
-            elo=func.mod(cast(Player.elo, Numeric), 100),
-        )
-    )
-    await session.flush()
+# async def mod_all_players_elo(session):
+#     await session.execute(
+#         update(Player).values(
+#             elo=func.mod(cast(Player.elo, Numeric), 100),
+#         )
+#     )
+#     await session.flush()
 
 
 async def set_player_elo_by_name(
