@@ -124,9 +124,9 @@ async def recalculate_rush6_elo(session):
         current_participants = place
 
         elo_change = (
-            100
+            min(100
             * (((registered - current_participants) / (registered - 1)) ** 1.5)
-            * ((registered / 15) ** 0.2)
+            * ((registered / 15) ** 0.2), 99.9)
         )
 
         player = await session.scalar(
