@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, func, cast, Numeric
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from .common import order, get_all_and_total, apply_sorting
 from app.models.player import Player
@@ -66,7 +66,7 @@ async def reset_all_players_elo(session, elo: float = 1000):
 async def mod_all_players_elo(session):
     await session.execute(
         update(Player).values(
-            elo=func.mod(cast(Player.elo, Numeric), 100),
+            elo=Player.elo % 100,
         )
     )
     await session.flush()
