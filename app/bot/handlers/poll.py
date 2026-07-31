@@ -141,7 +141,7 @@ async def poll_answer_handler(
                 item = TablePlayerPatch(eliminated=True)
                 print("\n ⚠️⚠️⚠️ BEFORE LEAVE_TABLE IN POLL ANSWER \n")
                 current_participants = await table_participants_count(session, table_id)
-                tp.player.elo_change_per_match = 100 * ((game.registered - current_participants)/(game.registered - 1)**(1.5))*(game.registered/15)**(0.2)
+                tp.player.elo_change_per_match = 100 * (((game.registered - current_participants)/(game.registered - 1))**(1.5))*(game.registered/15)**(0.2)
                 await leave_table(session, item, table_id, player.id, player.id, game_player.player.name)
                 print("⚠️⚠️⚠️ LEFT TABLE")
                 await rating_update_ballroom_system(session, game.id)

@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.orm import selectinload
 from .common import order, get_all_and_total, apply_sorting
 from app.models.player import Player
@@ -60,4 +60,83 @@ async def reset_all_players_elo(session, elo: float = 1000):
             elo_change_per_match=0,
         )
     )
+    await session.flush()
+
+
+async def mod_all_players_elo(session):
+    await session.execute(
+        update(Player).values(
+            elo=func.mod(Player.elo, 100),
+        )
+    )
+    await session.flush()
+
+
+async def set_player_elo_by_name(
+    session,
+    player_name: str,
+    elo: float,
+):
+    result = await session.execute(
+        update(Player)
+        .where(Player.name == player_name)
+        .values(elo=elo)
+    )
+
+    await session.flush()
+
+
+async def recalculate_rush6_elo(session):
+    placement = [
+        "ksgo",
+        "AnanasClassic",
+        "Popit",
+        "AstapovIE",
+        "Denis",
+        "Khadgar",
+        "progiv",
+        "temastian",
+        "Aleksandr Lazarev",
+        "papinsibiryak54",
+        "4 сыра",
+        "eewwaann",
+        "a_gundorov",
+        "lily_kurchenko",
+        "Kamran",
+        "GermanMax",
+        "alexyalunin",
+        "MeshaZa",
+        "DenisChistov",
+        "Lev",
+        "messoem",
+        "Vasilii Kozlov",
+        "Санчоус",
+        "Lirikl",
+        "elyaishere",
+        "starRlCK",
+        "Passtika",
+        "RaymanDaxter",
+    ]
+
+    registered = len(placement)
+
+    for place, name in enumerate(placement, start=1):
+        current_participants = place
+
+        elo_change = (
+            100
+            * (((registered - current_participants) / (registered - 1)) ** 1.5)
+            * ((registered / 15) ** 0.2)
+        )
+
+        player = await session.scalar(
+            select(Player).where(Player.name == name)
+        )
+
+        if player is None:
+            print(f"Player '{name}' not found")
+            continue
+
+        player.elo = elo_change
+
     await session.flush()

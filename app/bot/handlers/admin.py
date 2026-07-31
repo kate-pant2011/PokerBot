@@ -24,6 +24,7 @@ from app.bot.states.register import RegisterState
 from app.database.game import get_all_games, get_active_game_players, get_game_by_id
 from app.database.table import get_table_by_id, get_active_tables
 from app.database.table_player import get_active_player_table, get_table_players_for_knockout, reward_survivors, get_table_players_by_id
+from app.database.player import mod_all_players_elo, recalculate_rush6_elo
 
 router = Router()
 
@@ -216,7 +217,11 @@ async def process_game_date(message: Message, state: FSMContext, bot: Bot, sessi
     poll_register = await bot.send_poll(
         chat_id=int(chat_id),
         question=(
-            f"<b>{name}</b> ({day})\n"
+            f"<b>📢 Турнир!</b>\n"
+            f"<b>{name}</b>\n"
+            f"📆 Когда: {day}\n"
+            f"🕗 Во сколько: {time}\n"
+             "\n"
             f"Я секретарь турнира, зарегистрирую вас 🧐\n"
             "Тыкните если точно будете ⬇️"
         ),
@@ -269,19 +274,19 @@ async def process_game_date(message: Message, state: FSMContext, bot: Bot, sessi
         me = await bot.get_me()
         bot_username = me.username
 
-        link = f"https://t.me/{bot_username}?start=join"
+        # link = f"https://t.me/{bot_username}?start=join"
 
-        await bot.send_message(
-            chat_id=int(chat_id),
-            text=(
-                f"<b>📢 Турнир!</b>\n"
-                f"<b>{name}</b>\n"
-                f"📆 Когда: {day}\n"
-                f"🕗 Во сколько: {time}\n"
-                f' 👉 <a>регистрируйтесь в поле в основной беседе</a>' # тут ссылка была href="{link}" внутри <a ...>
-            ),
-            message_thread_id=thread_id
-        )
+        # await bot.send_message(
+        #     chat_id=int(chat_id),
+        #     text=(
+        #         f"<b>📢 Турнир!</b>\n"
+        #         f"<b>{name}</b>\n"
+        #         f"📆 Когда: {day}\n"
+        #         f"🕗 Во сколько: {time}\n"
+        #         f' 👉 <a>регистрируйтесь в поле в основной беседе</a>' # тут ссылка была href="{link}" внутри <a ...>
+        #     ),
+        #     message_thread_id=thread_id
+        # )
 
     await state.clear()
 
@@ -871,4 +876,9 @@ async def cb_create_game(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.answer()
     await callback.message.edit_text("🆗 Nothing has been changed")
-    
+
+
+@router.message(Command("reset_shit"))
+async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
+    await mod_all_players_elo(session)
+    await recalculate_rush6_elo(session)

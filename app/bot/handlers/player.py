@@ -510,6 +510,10 @@ async def cb_knockout(callback: CallbackQuery, session: AsyncSession):
     player_id = int(player_id)
 
     try:
+        game = await get_active_game(session)
+        tp = await get_table_player_by_id(session, table_id, player_id)
+        current_participants = await table_participants_count(session, table_id)
+        tp.player.elo_change_per_match = 100 * (((game.registered - current_participants)/(game.registered - 1))**(1.5))*(game.registered/15)**(0.2)
         user = await check_player_tg_id(session=session, tg_id=tg_user.id)
         item = TablePlayerPatch(eliminated=True)
         data = await leave_table(
@@ -517,10 +521,7 @@ async def cb_knockout(callback: CallbackQuery, session: AsyncSession):
         )
         eliminated = data.player
         #table = await get_table_by_id(session, table_id)
-        game = await get_active_game(session)
-        tp = await get_table_player_by_id(session, table_id, player_id)
-        current_participants = await table_participants_count(session, table_id)
-        tp.player.elo_change_per_match = 100 * ((game.registered - current_participants - 1)/(game.registered - 1)**(1.5))*(game.registered/15)**(0.2)
+        
         await rating_update_ballroom_system(session, game.id)
 
     except ApplicationException as e:

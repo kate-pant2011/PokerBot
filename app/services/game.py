@@ -118,7 +118,7 @@ async def join_game(session, game_id, player_id):
             
         elif in_game.status == Status.LEFT:
             in_game.status = Status.JOINED
-            return ResultResponse(result="joined")
+            return ResultResponse(result="✅ Ты присоединился")
         
         else:
             return ResultResponse(result="it breaks here")
@@ -151,7 +151,7 @@ async def join_game(session, game_id, player_id):
             print("BEFORE ADD TABLE")
             if table_:
                 table_player = await add_table_player(session, table_.id, player_id)
-                text = f"🪑Твой стол #{table_.number}"
+                text = f"🪑Двигай за свободное место"
                 print(f"\nTABLE ID for newcommer{table_.id}\n")
             else:
                 text = f"Попроси организатора перемешать столы 🪑, время пришло"
@@ -160,7 +160,7 @@ async def join_game(session, game_id, player_id):
     except IntegrityError as e:
         raise ApplicationException(f"SQL Error: {e}", 400)
 
-    return ResultResponse(result=text if text else "joined")
+    return ResultResponse(result=text if text else "✅ Ты присоединился")
 
 
 async def leave_game(session, game_id, player_id):
