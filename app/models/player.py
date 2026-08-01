@@ -8,7 +8,7 @@ class Player(BaseModel):
 
     name = Column(String, nullable=False, unique=True)
     telegram_id = Column(BigInteger, unique=True, nullable=False, index=True)
-    elo = Column(Float, default=1500)
+    elo = Column(Float, default=0)
     elo_change_per_match = Column(Float, default=0, nullable=True)
 
     is_archived = Column(Boolean, nullable=False, default=False, index=True)
