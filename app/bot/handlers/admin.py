@@ -885,13 +885,17 @@ async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
     #await recalculate_rush6_elo(session)
     await set_player_elo_by_name(
         session,
-        "Penchekrak",
+        "sergey_mw",
+        2.0)
+    await set_player_elo_by_name(
+        session,
+        "f4koffka",
         20.0)
     await set_player_elo_by_name(
         session,
-        "Granzoy",
-        139.0)
+        "kimgeorgys",
+        0)
     await set_player_elo_by_name(
-        session,
-        "gtalpa",
-        168)
+            session,
+            "I_Know_Voodoo",
+            38)
