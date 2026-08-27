@@ -894,7 +894,7 @@ async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
     await set_player_elo_by_name(
         session,
         "kimgeorgys",
-        0)
+        10.0)
     await set_player_elo_by_name(
             session,
             "I_Know_Voodoo",
