@@ -2,6 +2,8 @@
 
 Backend-system for a local poker club
 
+> Бот используется в production как `@TiltClub_bot`. Перед изменением поведения прочитайте [карту документации](docs/README.md): текущее состояние и целевая модель турниров описаны раздельно.
+
 The project includes:
 - telegram bot as the main user interface
 - FastAPI REST API
@@ -39,10 +41,10 @@ project/
 │   ├── config/
 │   ├── database/
 │   ├── models/       # SQLAlchemy models
-│   ├── routers/      # FastAPI endpoints 
+│   ├── routers/      # FastAPI endpoints
 │   ├── schemas/      # Pydantic schemas
 │   ├── services/     # Business logic
-│   ├── main.py       # Application entry point 
+│   ├── main.py       # Application entry point
 ├── README.md
 └── requirements.txt
 ```
@@ -101,7 +103,6 @@ Includes:
 ### TelegramChat
 Telegram chat/topic integration for games
 
-
 # Infrastructure
 
 The project is deployed using Docker Compose on an Ubuntu Server.
@@ -128,7 +129,7 @@ The project is currently in active development.
 
 Planned features:
 - improved rating system
-- admin panel 
+- admin panel
 
 ---
 
@@ -137,4 +138,3 @@ Planned features:
 Rating system author: https://github.com/Prost444
 
 The initial version of the project also belongs to the same author and was later forked and refactored.
-
