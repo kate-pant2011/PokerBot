@@ -4,7 +4,7 @@ def leaderboard_text(players) -> str:
 
     medals = {1: "🥇", 2: "🥈", 3: "🥉"}
 
-    lines = ["<b>🏆 Leaderboard</b>\n"]
+    lines = ["<b>🏆 Leaderboard 🎃🍂</b>\n"]
 
     for i, p in enumerate(players, 1):
         medal = medals.get(i, f"{i}.")
