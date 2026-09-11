@@ -54,8 +54,8 @@ async def lifespan(app: FastAPI):
 
     await bot.set_my_commands(
         [
-            BotCommand(command="register", description="Register"),
-            BotCommand(command="join", description="Join game"),
+            #BotCommand(command="register", description="Register"),
+            #BotCommand(command="join", description="Join game"),
             BotCommand(command="start_game", description="Start game"),
             BotCommand(command="rating", description="Leaderboard"),
             BotCommand(command="stats", description="Your stats"),

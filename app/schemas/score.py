@@ -46,7 +46,7 @@ class EloTableResult(BaseModel):
     chips_bonus: float
     position: int
     chips: int
-    finished_at: datetime
+    finished_at: datetime | None
 
 
 class TableResultResponse(BaseModel):

@@ -14,8 +14,8 @@ class TablePlayer(BaseModel):
     )
     table = relationship("Table", back_populates="table_participants")
 
-    started_at = Column(DateTime(timezone=True), nullable=False)
-    finished_at = Column(DateTime(timezone=True), nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=False) # можно сделать неважным
+    finished_at = Column(DateTime(timezone=True), nullable=True) # можно сделать неважным
     is_active = Column(Boolean, default=True, nullable=False)
 
     position = Column(Integer, nullable=True)

@@ -8,8 +8,8 @@ class Table(BaseModel):
 
     number = Column(Integer, nullable=False)
 
-    started_at = Column(DateTime(timezone=True), nullable=True)
-    finished_at = Column(DateTime(timezone=True), nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=True) #неважго теперь
+    finished_at = Column(DateTime(timezone=True), nullable=True) #неважго теперь
 
     game_id = Column(Integer, ForeignKey("games.id"), nullable=False)
     game = relationship("Game", back_populates="tables")

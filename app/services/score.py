@@ -130,7 +130,7 @@ async def close_table_and_update_elo(session, table_id, user_id):
     table.finished_at = datetime.now(timezone.utc)
     await session.flush()
 
-    elo_results.sort(key=lambda x: x.finished_at, reverse=True)
+    elo_results.sort(key=lambda x: x.position)
 
     return TableResultResponse(
         id=table.id,

@@ -11,3 +11,4 @@ config/
 *app.log*
 **/config.py
 docker-compose.yml
+app/models_change

@@ -50,7 +50,7 @@ class Game(BaseModel):
     telegram_chat_id = Column(BigInteger, ForeignKey("telegram_chats.chat_id"), nullable=True)
     telegram_chat = relationship("TelegramChat", back_populates="games")
 
-    #poll = Column(JSONB, nullable=True)
+    # numer of rouds чтобы потом сравнивать друг с другом сравнимых
     poll_id = Column(String, nullable=True)
     poll_register_id = Column(String, nullable=True)
     poll_exit_id = Column(String, nullable=True)
@@ -65,7 +65,13 @@ class GamePlayer(BaseModel):
 
     game_id = Column(Integer, ForeignKey("games.id"), nullable=False)
     game = relationship("Game", back_populates="players")
-
+    # list of table numbers where player sitted during game
+    # is_active = Column(Boolean, default=True, nullable=False)
+    # position = Column(Integer, nullable=True)
+    # eliminated_by_id = Column(Integer, ForeignKey("players.id"), nullable=True)
+    # eliminator = relationship(
+    #     "Player", foreign_keys=[eliminated_by_id], back_populates="eliminations"
+    # )
     status = Column(
         SQLEnum(Status, name="game_player_status"),
         nullable=False,
