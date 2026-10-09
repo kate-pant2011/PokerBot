@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
             BotCommand(command="shuffle", description="shuffle_tables"),
             BotCommand(command="help", description="Help"),
             BotCommand(command="final_poll", description="Final table poll"),
-            #BotCommand(command="reset_shit", description="reset_shit")
+            BotCommand(command="reset_shit", description="reset_shit")
         ]
     )
 
