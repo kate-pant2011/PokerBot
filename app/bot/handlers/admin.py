@@ -915,21 +915,73 @@ async def send_final_table_poll(message: Message, bot: Bot, session: AsyncSessio
 @router.message(Command("reset_shit"))
 async def cmd_reset_shit(message: Message, bot: Bot, session: AsyncSession):
     #await mod_all_players_elo(session)
-    await reset_all_players_elo(session, 0)
+    #await reset_all_players_elo(session, 0)
     #await recalculate_rush6_elo(session)
-    # await set_player_elo_by_name(
-    #     session,
-    #     "sergey_mw",
-    #     2.0)
-    # await set_player_elo_by_name(
-    #     session,
-    #     "f4koffka",
-    #     20.0)
-    # await set_player_elo_by_name(
-    #     session,
-    #     "kimgeorgys",
-    #     10.0)
-    # await set_player_elo_by_name(
-    #         session,
-    #         "I_Know_Voodoo",
-    #         38)
+    await set_player_elo_by_name(
+        session,
+        "Иван",
+        169.0)
+    await set_player_elo_by_name(
+        session,
+        "manul5",
+        170.0)
+    await set_player_elo_by_name(
+        session,
+        "vovanbart",
+        60.0)
+    await set_player_elo_by_name(
+        session,
+        "MeshaZa",
+        156.0)
+    await set_player_elo_by_name(
+        session,
+        "Khadgar",
+        175.0)
+    await set_player_elo_by_name(
+        session,
+        "Arno_Step",
+        163.0)
+    await set_player_elo_by_name(
+        session,
+        "gtalpa",
+        99.0)
+    await set_player_elo_by_name(
+        session,
+        "abirdinthehands",
+        83.0)
+    await set_player_elo_by_name(
+        session,
+        "AleksSidorin",
+        135.0)
+    await set_player_elo_by_name(
+        session,
+        "akuiii",
+        111.0)
+    await set_player_elo_by_name(
+        session,
+        "abirdinthehands",
+        95.0)
+    await set_player_elo_by_name(
+        session,
+        "Teralai",
+        99.3)
+    await set_player_elo_by_name(
+        session,
+        "xbnsm",
+        202.0)
+    await set_player_elo_by_name(
+        session,
+        "Aleksandr Lazarev",
+        318.0)
+    await set_player_elo_by_name(
+        session,
+        "Vasilii Kozlov",
+        274.0)
+    await set_player_elo_by_name(
+        session,
+        "BTNBRD",
+        105.0)
+    await set_player_elo_by_name(
+        session,
+        "denis_stafilidis",
+        0.0)
